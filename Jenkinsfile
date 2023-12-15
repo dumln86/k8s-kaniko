@@ -42,9 +42,7 @@ podTemplate(yaml: '''
     stage('Build Java Image') {
       container('kaniko') {
         stage('Build a Go project') {
-          sh '''
-            /kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${env.GIT_COMMIT:0:6}
-          '''
+          sh "/kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${env.GIT_COMMIT:0:6}"
         }
       }
     }

@@ -48,7 +48,8 @@ podTemplate(yaml: '''
     }
 
     stage('Deploy Pod') {
-      sh "deploy.sh ${BUILD_TAG}"
-      }
+      sh "echo ${BUILD_TAG}"
+      sh 'kubectl --help'
     }
   }
+}

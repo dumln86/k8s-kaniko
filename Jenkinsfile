@@ -46,5 +46,10 @@ podTemplate(yaml: '''
         }
       }
     }
+
+    stage('Deploy Pod') {
+      sh "deploy.sh ${BUILD_TAG}"
+      }
+    }
   }
 }

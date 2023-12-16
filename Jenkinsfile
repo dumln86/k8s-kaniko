@@ -28,7 +28,6 @@ podTemplate(yaml: '''
               path: config.json
 ''') {
   node(POD_LABEL) {
-    def tags = [env.BUILD_TAG, 'latest']
     stage('Get a Maven project') {
       git url: 'https://github.com/dumln86/k8s-kaniko.git', branch: 'main'
       container('maven') {
@@ -43,7 +42,7 @@ podTemplate(yaml: '''
     stage('Build Java Image') {
       container('kaniko') {
         stage('Build a Go project') {
-          sh "/kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${var.tags}"
+          sh "/kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${env.BUILD_TAG}"
         }
       }
     }

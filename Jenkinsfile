@@ -26,35 +26,26 @@ podTemplate(yaml: '''
             items:
             - key: .dockerconfigjson
               path: config.json
-''')
-node(POD_LABEL) {
-  stage('Get a Maven project') {
-    git url: 'https://github.com/dumln86/k8s-kaniko.git', branch: 'main'
-    {
-      script
-      {
-        GIT_COMMIT = sh(
-            script: 'git rev-parse -short=10 HEAD | tail -n +2',
-            returnStdout: true
-        )
-        echo "Git committer email: ${GIT_COMMIT}"
-      }
-    }
-    container('maven') {
-      stage('Build a Maven project') {
-        sh '''
+''') {
+  node(POD_LABEL) {
+    def tags = [env.BUILD_TAG, 'latest']
+    stage('Get a Maven project') {
+      git url: 'https://github.com/dumln86/k8s-kaniko.git', branch: 'main'
+      container('maven') {
+        stage('Build a Maven project') {
+          sh '''
         echo pwd
         '''
+        }
       }
     }
-  }
 
-  stage('Build Java Image') {
-    container('kaniko') {
-      stage('Build a Go project') {
-        sh "/kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${GIT_COMMIT}"
+    stage('Build Java Image') {
+      container('kaniko') {
+        stage('Build a Go project') {
+          sh "/kaniko/executor --context `pwd` --destination dumln86/hello-kaniko:${var.tags}"
+        }
       }
     }
   }
 }
-
